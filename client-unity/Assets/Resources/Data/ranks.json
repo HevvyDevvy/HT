@@ -1,0 +1,18 @@
+{
+  "ranks": [
+    { "rank": 1,  "title": "Rookie",            "unlockLevel": 1,  "tier": "Gold" },
+    { "rank": 2,  "title": "Younger",           "unlockLevel": 6,  "tier": "Gold" },
+    { "rank": 3,  "title": "Short General",     "unlockLevel": 11, "tier": "Gold" },
+    { "rank": 4,  "title": "Player",            "unlockLevel": 16, "tier": "Gold" },
+    { "rank": 5,  "title": "Ganger",            "unlockLevel": 21, "tier": "Platinum" },
+    { "rank": 6,  "title": "Shot Caller",       "unlockLevel": 26, "tier": "Platinum" },
+    { "rank": 7,  "title": "Crew Leader",       "unlockLevel": 31, "tier": "Platinum" },
+    { "rank": 8,  "title": "Playmaker",         "unlockLevel": 36, "tier": "Platinum" },
+    { "rank": 9,  "title": "Trapper",           "unlockLevel": 41, "tier": "Platinum" },
+    { "rank": 10, "title": "Hustler",           "unlockLevel": 46, "tier": "Platinum" },
+    { "rank": 11, "title": "Gangster",          "unlockLevel": 51, "tier": "Diamond-Enhanced" },
+    { "rank": 12, "title": "Contender",         "unlockLevel": 56, "tier": "Diamond-Enhanced" },
+    { "rank": 13, "title": "Second in Command", "unlockLevel": 61, "tier": "Diamond-Enhanced" },
+    { "rank": 14, "title": "Head Hustler",      "unlockLevel": 70, "tier": "Diamond-Enhanced" }
+  ]
+}
