@@ -1,0 +1,61 @@
+name: Bootstrap Unity Project (run once)
+
+# This solves the "no local Unity Editor" problem entirely on GitHub's own
+# servers. It runs Unity in headless batch mode to generate the missing
+# ProjectSettings/ folder that a real Unity project needs (our repo only had
+# Assets/Scripts — this creates the rest), then commits it back to the repo.
+#
+# SETUP NEEDED FIRST (one-time, done from a phone browser, no desktop needed):
+#   1. Create a free Unity ID at https://id.unity.com if you don't have one.
+#   2. In the repo: Settings -> Secrets and variables -> Actions -> add:
+#        UNITY_EMAIL    = your Unity account email
+#        UNITY_PASSWORD = your Unity account password
+#        UNITY_LICENSE  = your activated license file contents — get this by
+#                         running "1. Request Unity Activation File" FIRST
+#                         and following the steps in that workflow's comments.
+#   3. Once all three secrets exist, run this workflow manually: Actions tab
+#      -> "Bootstrap Unity Project" -> Run workflow.
+#
+# HONESTY NOTE: this is a real, working approach, but it's also the part of
+# this whole project I can least guarantee works first try without being
+# able to run it myself (no Unity, no network in my sandbox). If the exact
+# Unity version tag below is unavailable by the time you run this, check
+# https://game.ci for the current supported version list and adjust
+# UNITY_VERSION accordingly.
+
+on:
+  workflow_dispatch:
+
+env:
+  UNITY_VERSION: 2022.3.50f1
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create a fresh Unity project scaffold
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: client-unity
+          unityVersion: ${{ env.UNITY_VERSION }}
+          targetPlatform: StandaloneLinux64
+          # A build here is really just a side effect — the thing we actually
+          # want is Unity having opened the project once, which generates
+          # Library/, ProjectSettings/, and resolves Packages/manifest.json
+          # into a real project. Our Assets/ folder (scripts + JSON data)
+          # stays exactly as committed; Unity just fills in what's missing
+          # around it.
+
+      - name: Commit the generated project files back to the repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add client-unity/ProjectSettings client-unity/Packages/packages-lock.json
+          git commit -m "Bootstrap: generate Unity ProjectSettings via headless Editor" || echo "Nothing to commit"
+          git push

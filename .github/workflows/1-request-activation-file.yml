@@ -1,0 +1,50 @@
+name: 1. Request Unity Activation File (run this first)
+
+# STEP 1 of Unity licensing. Personal licenses need a one-time manual
+# activation exchange with Unity's own license server, in ADDITION to your
+# UNITY_EMAIL/UNITY_PASSWORD secrets (not instead of them — game-ci's builder
+# action requires both).
+#
+# WHAT THIS DOES: runs Unity briefly in headless batch mode just to generate
+# a small .alf request file, then uploads it as a workflow artifact you can
+# download.
+#
+# WHAT TO DO WITH IT (all from your phone browser):
+#   1. Run this workflow (Actions tab -> this workflow -> Run workflow).
+#   2. When it finishes, open the run, scroll to "Artifacts", download the
+#      file (it'll be a small .alf file inside a zip).
+#   3. Go to https://license.unity3d.com/manual in your phone browser.
+#   4. Log in with your Unity ID (the email/password you just set).
+#   5. Upload the .alf file there. Unity will generate a .ulf file for you
+#      to download in return.
+#   6. Open that downloaded .ulf file (it's plain text/XML) and copy its
+#      ENTIRE contents.
+#   7. In GitHub: repo Settings -> Secrets and variables -> Actions ->
+#      New repository secret -> name it UNITY_LICENSE -> paste the full
+#      .ulf content as the value.
+#   8. Now re-run "Bootstrap Unity Project" — it should activate successfully
+#      this time, since UNITY_LICENSE + UNITY_EMAIL + UNITY_PASSWORD are all
+#      present.
+#
+# This is a one-time exchange — you won't need to repeat it unless the
+# license entry expires far in the future.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  request_activation_file:
+    name: Request manual activation file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request manual activation file
+        id: getManualLicenseFile
+        uses: webbertakken/unity-request-manual-activation-file@v1.2
+        with:
+          unityVersion: 2022.3.50f1
+
+      - name: Upload activation file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-activation-file
+          path: ${{ steps.getManualLicenseFile.outputs.filePath }}
